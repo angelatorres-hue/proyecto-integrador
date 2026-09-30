@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InventarioPro</title>
+  <link rel="stylesheet" href="plantilla/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body class="bg-light p-3">
+
+  <!-- VISTA 1: LOGIN -->
+  <section id="v-login" class="container text-center py-5" style="max-width: 400px;">
+    <div class="card shadow border-0 p-4 rounded-4">
+      <h3 class="fw-bold m-0">Acceso</h3>
+      <span class="badge bg-primary rounded-pill my-2">Control de Usuarios</span>
+      <form onsubmit="event.preventDefault(); show('v-dash')">
+        <div class="input-group mb-3"><span class="input-group-text">@</span><input type="text" class="form-control" placeholder="Correo / Usuario" required value="admin@dominio.com"></div>
+        <input type="password" class="form-control mb-3" placeholder="Contraseña" required value="123456">
+        <div class="form-check text-start mb-3"><input type="checkbox" class="form-check-input" id="r"><label for="r" class="form-check-label small">Recordar sesión</label></div>
+        <button class="btn btn-primary w-100 fw-bold">Ingresar al Panel</button>
+      </form>
+      <a href="#" onclick="show('v-reg')" class="small mt-3 text-decoration-none">¿No tienes cuenta? Crear una cuenta</a>
+    </div>
+  </section>
+
+  <!-- VISTA 2: REGISTRO -->
+  <section id="v-reg" class="container d-none" style="max-width: 600px;">
+    <nav><ol class="breadcrumb"><li class="breadcrumb-item"><a href="#" onclick="show('v-login')">Login</a></li><li class="breadcrumb-item active">Registro</li></ol></nav>
+    <div class="card shadow border-0 p-4 rounded-4 text-center">
+      <h3 class="fw-bold m-0">Crear Cuenta</h3>
+      <span class="badge bg-success rounded-pill my-2">Nuevo Usuario</span>
+      <form onsubmit="event.preventDefault(); alert('¡Cuenta creada!'); show('v-login')">
+        <div class="row g-2 mb-3">
+          <div class="col"><input type="text" class="form-control" placeholder="Nombres" required></div>
+          <div class="col"><input type="text" class="form-control" placeholder="Apellidos" required></div>
+        </div>
+        <div class="input-group mb-3"><span class="input-group-text">@</span><input type="email" class="form-control" placeholder="Correo Electrónico" required></div>
+        <div class="row g-2 mb-3">
+          <div class="col"><input type="password" class="form-control" placeholder="Contraseña" required></div>
+          <div class="col"><input type="password" class="form-control" placeholder="Confirmar" required></div>
+        </div>
+        <div class="form-check text-start mb-3"><input type="checkbox" class="form-check-input" required><label class="form-check-label small">Acepto los términos y condiciones</label></div>
+        <button class="btn btn-success w-100 fw-bold">Registrar Cuenta</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- VISTA 3: DASHBOARD -->
+  <section id="v-dash" class="container d-none" style="max-width: 900px;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="fw-bold m-0">Panel Operativo</h3>
+      <button class="btn btn-outline-danger btn-sm" onclick="show('v-login')">Cerrar Sesión</button>
+    </div>
+    <div class="row g-3 mb-4">
+      <div class="col-6"><div class="card p-3 border-0 shadow-sm"><small class="text-muted">Stock Total</small><h4 id="stock" class="m-0 fw-bold text-success">120</h4></div></div>
+      <div class="col-6"><div class="card p-3 border-0 shadow-sm"><small class="text-muted">Avisos</small><h4 class="m-0 fw-bold text-warning">5 Críticos</h4></div></div>
+    </div>
+    <div class="card p-3 border-0 shadow-sm">
+      <div class="d-flex justify-content-between mb-3">
+        <h5 class="fw-bold m-0">Catálogo de Productos</h5>
+        <button class="btn btn-primary btn-sm" onclick="show('v-crear')">+ Nuevo Producto</button>
+      </div>
+      <table class="table align-middle">
+        <thead><tr><th>SKU</th><th>Producto</th><th>Categoría</th><th>Estado</th><th class="text-end">Acciones</th></tr></thead>
+        <tbody id="tbl"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- VISTA 4: CREAR PRODUCTO -->
+  <section id="v-crear" class="container d-none" style="max-width: 700px;">
+    <div class="d-flex justify-content-between mb-3"><h3 class="fw-bold m-0">Nuevo Producto</h3><button class="btn btn-sm btn-outline-secondary" onclick="show('v-dash')">Volver</button></div>
+    <div class="card p-4 border-0 shadow-sm">
+      <form onsubmit="agregar(event)">
+        <div class="row g-2 mb-3">
+          <div class="col"><label class="small fw-bold">Nombre</label><input type="text" id="c-nom" class="form-control" required></div>
+          <div class="col"><label class="small fw-bold">SKU</label><input type="text" id="c-sku" class="form-control" required></div>
+        </div>
+        <div class="mb-3"><label class="small fw-bold">Categoría</label><select id="c-cat" class="form-select"><option>Periféricos</option><option>Componentes</option><option>Soporte Técnico</option></select></div>
+        <div class="mb-3">
+          <label class="small fw-bold d-block">Disponibilidad</label>
+          <input type="radio" class="btn-check" name="c-disp" id="cd1" value="En Stock" checked><label class="btn btn-outline-primary btn-sm" for="cd1">En Stock</label>
+          <input type="radio" class="btn-check" name="c-disp" id="cd2" value="Agotado"><label class="btn btn-outline-primary btn-sm" for="cd2">Agotado</label>
+        </div>
+        <button class="btn btn-primary px-4">Guardar Producto</button>
+        <button type="button" class="btn btn-outline-secondary px-4" onclick="show('v-dash')">Cancelar</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- VISTA 5: EDITAR PRODUCTO -->
+  <section id="v-edit" class="container d-none" style="max-width: 700px;">
+    <h3 class="fw-bold mb-3">Modificar Producto</h3>
+    <div class="card p-4 border-0 shadow-sm">
+      <form onsubmit="actualizar(event)">
+        <input type="hidden" id="e-idx">
+        <div class="row g-2 mb-3">
+          <div class="col"><label class="small fw-bold">Nombre</label><input type="text" id="e-nom" class="form-control" required></div>
+          <div class="col"><label class="small fw-bold">SKU</label><input type="text" id="e-sku" class="form-control bg-light" readonly></div>
+        </div>
+        <div class="mb-3"><label class="small fw-bold">Categoría</label><select id="e-cat" class="form-select"><option>Periféricos</option><option>Componentes</option><option>Soporte Técnico</option></select></div>
+        <div class="mb-3">
+          <label class="small fw-bold d-block">Disponibilidad</label>
+          <input type="radio" class="btn-check" name="e-disp" id="ed1" value="En Stock"><label class="btn btn-outline-primary btn-sm" for="ed1">En Stock</label>
+          <input type="radio" class="btn-check" name="e-disp" id="ed2" value="Agotado"><label class="btn btn-outline-primary btn-sm" for="ed2">Agotado</label>
+        </div>
+        <button class="btn btn-warning text-dark px-4 fw-bold">Actualizar</button>
+        <button type="button" class="btn btn-outline-secondary px-4" onclick="show('v-dash')">Cancelar</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- VISTA 6: ELIMINAR PRODUCTO -->
+  <section id="v-del" class="container d-none" style="max-width: 600px;">
+    <div class="alert alert-danger shadow-sm"><strong>¡Atención!</strong> Confirmación requerida para eliminar registro.</div>
+    <div class="card p-4 border-0 shadow-sm mb-3">
+      <div><strong>SKU:</strong> <span id="d-sku"></span></div>
+      <div><strong>Producto:</strong> <span id="d-nom"></span></div>
+    </div>
+    <button class="btn btn-danger px-4" onclick="confirmarBorrar()">Confirmar y Eliminar</button>
+    <button class="btn btn-secondary px-4" onclick="show('v-dash')">Cancelar</button>
+  </section>
+
+  <script src="plantilla/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let db = [
+      { sku: 'PROD-001', nombre: 'Teclado Mecánico RGB', categoria: 'Periféricos', estado: 'En Stock' },
+      { sku: 'PROD-002', nombre: 'Monitor 24 pulgadas', categoria: 'Componentes', estado: 'En Stock' }
+    ], delIdx = null;
+
+    function show(id) {
+      document.querySelectorAll('section').forEach(s => s.classList.add('d-none'));
+      document.getElementById(id).classList.remove('d-none');
+      if (id === 'v-dash') render();
+    }
+
+    function render() {
+      const tbl = document.getElementById('tbl');
+      tbl.innerHTML = db.map((p, i) => `
+        <tr>
+          <td class="fw-bold">${p.sku}</td><td>${p.nombre}</td><td>${p.categoria}</td>
+          <td><span class="badge ${p.estado === 'En Stock' ? 'bg-success' : 'bg-danger'}">${p.estado}</span></td>
+          <td class="text-end">
+            <button class="btn btn-sm btn-outline-warning" onclick="preEditar(${i})"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-outline-danger" onclick="preBorrar(${i})"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>`).join('');
+      document.getElementById('stock').innerText = db.length * 50;
+    }
+
+    function agregar(e) {
+      e.preventDefault();
+      db.push({ sku: c('c-sku').value, nombre: c('c-nom').value, categoria: c('c-cat').value, estado: document.querySelector('input[name="c-disp"]:checked').value });
+      e.target.reset(); show('v-dash');
+    }
+
+    function preEditar(i) {
+      c('e-idx').value = i; c('e-sku').value = db[i].sku; c('e-nom').value = db[i].nombre; c('e-cat').value = db[i].categoria;
+      document.getElementById(db[i].estado === 'En Stock' ? 'ed1' : 'ed2').checked = true;
+      show('v-edit');
+    }
+
+    function actualizar(e) {
+      e.preventDefault(); const i = c('e-idx').value;
+      db[i].nombre = c('e-nom').value; db[i].categoria = c('e-cat').value;
+      db[i].estado = document.querySelector('input[name="e-disp"]:checked').value;
+      show('v-dash');
+    }
+
+    function preBorrar(i) { delIdx = i; c('d-sku').innerText = db[i].sku; c('d-nom').innerText = db[i].nombre; show('v-del'); }
+    function confirmarBorrar() { if(delIdx !== null) db.splice(delIdx, 1); show('v-dash'); }
+    const c = id => document.getElementById(id);
+  </script>
+</body>
+</html>
